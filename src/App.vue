@@ -1,53 +1,59 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <HelloWorld/>
-    <Total/>
-    <div class="firebase-data">
-      <div v-for="item in items">
-       <p><a v-bind:href="item.coffee">{{item.coffee}}</a></p>
-     </div>
+  <div class="c-items">
+    <div v-for="item of items">
+      {{item.name}} : {{ item.milligrams }}
+    </div>
+    <div v-for="date of dates">
+      {{date.date}} : {{ date.totalMg }}
     </div>
   </div>
 </template>
 
 <script>
 import Firebase from 'firebase'
-
-import HelloWorld from './components/HelloWorld'
-import Total from './components/total'
+import Record from './components/record'
 
 const config = {
-  apiKey: 'AIzaSyDBL7T8sQFweg5_8kJRIR1xW8wzKUhqej4',
-  authDomain: 'motassium.firebaseapp.com',
-  databaseURL: 'https://motassium.firebaseio.com',
-  storageBucket: 'motassium.appspot.com',
-  messagingSenderId: '787203548830',
+  apiKey: "AIzaSyDBL7T8sQFweg5_8kJRIR1xW8wzKUhqej4",
+  authDomain: "motassium.firebaseapp.com",
+  databaseURL: "https://motassium.firebaseio.com",
+  projectId: "motassium",
+  storageBucket: "motassium.appspot.com",
+  messagingSenderId: "787203548830"
 };
 
 const app = Firebase.initializeApp(config)
 const db = app.database()
-const itemsRef = db.ref('motassium')
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld,
-    Total
+  data() {
+    return {
+      items: {},
+      dates: {},
+    }
   },
+
   firebase: {
-    items: itemsRef
+    items: {
+      source: db.ref('items'),
+      // Optional, allows you to handle any errors.
+      cancelCallback(err) {
+        console.error(err);
+      }
+    },
+    dates: {
+      source: db.ref('dates'),
+      cancelCallback(err) {
+        console.error(err);
+      }
+    }
   }
 }
+
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  .c-items{
+    background-color: red;
+  }
 </style>
